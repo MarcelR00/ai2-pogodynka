@@ -14,6 +14,9 @@ class Measurement
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: '0')]
+    private ?string $celsius = null;
+
     #[ORM\ManyToOne(inversedBy: 'measurements')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Location $location = null;
@@ -21,12 +24,21 @@ class Measurement
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 0)]
-    private ?string $celsius = null;
-
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCelsius(): ?string
+    {
+        return $this->celsius;
+    }
+
+    public function setCelsius(string $celsius): static
+    {
+        $this->celsius = $celsius;
+
+        return $this;
     }
 
     public function getLocation(): ?Location
@@ -49,18 +61,6 @@ class Measurement
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getCelsius(): ?string
-    {
-        return $this->celsius;
-    }
-
-    public function setCelsius(string $celsius): static
-    {
-        $this->celsius = $celsius;
 
         return $this;
     }

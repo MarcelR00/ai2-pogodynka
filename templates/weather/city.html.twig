@@ -12,7 +12,7 @@
         <ul>
             {% if measurements %}
                 {% for measurement in measurements %}
-                    <li>{{ measurement.date|date('d.m.Y') }}: {{ measurement.celsius }}&deg;C</li>
+                    <li>{{ measurement.date|date('Y.m.d') }}: {{ measurement.celsius }}&deg;C</li>
                 {% endfor %}
             {% else %}
                 <h2>Brak dostępnych pomiarów.</h2>

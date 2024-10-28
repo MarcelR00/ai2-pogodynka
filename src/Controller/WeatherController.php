@@ -11,12 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WeatherController extends AbstractController
 {
-    #[Route('/weather/{country}/{city}', name: 'app_weather', requirements: ['id' => '\d+'])]
-    public function city(
-        #[MapEntity(mapping: ['country' => 'country', 'city' => 'city'])]
-        Location $location,
-        MeasurementRepository $repository,
-    ): Response
+    #[Route('/weather/{id}', name: 'app_weather', requirements: ['id' => '\d+'])]
+    public function city(Location $location, MeasurementRepository $repository): Response
     {
         $measurements = $repository->findByLocation($location);
 
