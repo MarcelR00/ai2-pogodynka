@@ -18,15 +18,54 @@ class WeatherApiController extends AbstractController
         #[MapQueryParameter('country')] string $country,
         #[MapQueryParameter('city')] string $city,
         #[MapQueryParameter('format')] string $format = 'json',
-    ): JsonResponse
+        #[MapQueryParameter('twig')] bool $twig = false,
+    ): Response
     {
         $measurements = $util->getWeatherForCountryAndCity($country, $city);
+
+        if ($format === 'csv') {
+                if($twig){
+                    return $this->render('weather_api/index.csv.twig', [
+                        'city' => $city,
+                        'country' => $country,
+                        'measurements' => $measurements,
+                    ]);
+                }
+
+                $csv = "city,country,date,celsius,fahrenheit\n". implode(
+                    "\n",
+                    array_map(fn(Measurement $m) => sprintf(
+                        '%s,%s,%s,%s,%s',
+                        $city,
+                        $country,
+                        $m->getDate()->format('Y-m-d'),
+                        $m->getCelsius(),
+                        $m->getFahrenheit(),
+                    ), $measurements)
+                );
+
+            return new Response($csv, 200, [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => 'attachment; filename="weather.csv"',
+            ]);
+            }
+
+        if($twig){
+            return $this->render('weather_api/index.json.twig', [
+                'city' => $city,
+                'country' => $country,
+                'measurements' => $measurements,
+            ]);
+
+        }
+
         return $this->json([
             'city' => $city,
             'country' => $country,
             'measurements' => array_map(fn(Measurement $m) => [
                 'date' => $m->getDate()->format('Y-m-d'),
                 'celsius' => $m->getCelsius(),
+                'fahrenheit' => $m->getFahrenheit(),
             ], $measurements),
         ]);
     }
